@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CGPA Calculator - WizUP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,sans-serif;margin:0;background:url('../bg1.jpg')center/cover no-repeat fixed;color:#fff}
+    .wrap{padding:24px;max-width:760px;margin:36px auto}
+    .card{background:rgba(0,0,0,0.6);padding:18px;border-radius:12px}
+    input{padding:8px;border-radius:8px;border:none;width:80px}
+    .row{display:flex;gap:8px;align-items:center;margin-top:10px}
+    button{margin-top:12px;padding:8px 12px;border-radius:8px;border:none;background:#e5383b;color:#fff;font-weight:700}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="student-dashboard.html"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+    <div class="card">
+      <h1>CGPA Calculator (Simple)</h1>
+      <p>Enter credits and grade points per course. This is a lightweight client-side calculator.</p>
+      <div id="courses"></div>
+      <button id="add">Add Course</button>
+      <button id="calc">Calculate CGPA</button>
+      <div id="result" style="margin-top:12px;font-weight:700"></div>
+    </div>
+  </div>
+  <script>
+    (function(){try{const raw=localStorage.getItem('wizup.currentUser');if(!raw)window.location.href='student-signin.html'}catch(e){window.location.href='student-signin.html'}})();
+    function newRow(){var c=document.createElement('div');c.className='row';c.innerHTML='<input placeholder="credits" type="number" min="0" class="c"><input placeholder="grade (0-10)" type="number" min="0" max="10" step="0.01" class="g">';return c}
+    var list=document.getElementById('courses');document.getElementById('add').addEventListener('click',function(){list.appendChild(newRow())});document.getElementById('calc').addEventListener('click',function(){var rows=list.querySelectorAll('.row');var sum=0,wt=0;rows.forEach(function(r){var c=Number(r.querySelector('.c').value)||0;var g=Number(r.querySelector('.g').value)||0;sum+=c*g;wt+=c});var cgpa=wt? (sum/wt).toFixed(2):'--';document.getElementById('result').textContent='CGPA: '+cgpa});
+    // start with 2 rows
+    list.appendChild(newRow());list.appendChild(newRow());
+  </script>
+</body>
+</html>

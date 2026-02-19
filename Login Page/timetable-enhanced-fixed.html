@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Time Table - WizUP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Simple animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .wrap {
+            padding: 24px;
+            max-width: 1400px;
+            margin: 36px auto;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148,163,184,0.2);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        
+        a.back {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        a.back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-3px);
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .view-toggle.active {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        
+        .current-week {
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .filter-group select {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .filter-group select:focus {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            flex: 1;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+        
+        .search-box input:focus {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .timetable-container {
+            overflow-x: auto;
+            margin: 24px 0;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .timetable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+            color: #fff;
+        }
+        
+        .timetable th {
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            color: #fff;
+            padding: 16px 12px;
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .timetable td {
+            padding: 16px 12px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .timetable tr:hover td {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .time-slot {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .time-slot:hover {
+            background: rgba(255,255,255,0.12);
+            transform: scale(1.01);
+        }
+        
+        .time-slot.lecture {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: rgba(34,197,94,0.3);
+        }
+        
+        .time-slot.lab {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            border-color: rgba(245,158,11,0.3);
+        }
+        
+        .time-slot.break {
+            background: linear-gradient(135deg, #6b7280, #4c1d95);
+            border-color: rgba(107, 114, 128,0.3);
+        }
+        
+        .time-slot.exam {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-color: rgba(239, 68,68,0.3);
+        }
+        
+        .time-slot.selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(34,197,94,0.4);
+            border-color: #22c55e;
+        }
+        
+        .subject-name {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .time-info {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 4px;
+        }
+        
+        .time-info .room {
+            color: #22c55e;
+            font-weight: 600;
+        }
+        
+        .time-info .teacher {
+            color: #38bdf8;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 24px 0;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .calendar-section {
+            margin: 32px 0;
+            padding: 24px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .calendar-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .calendar-nav button {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-nav button:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-1px);
+        }
+        
+        .calendar-nav button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .calendar-nav button.active {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .calendar-day {
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .calendar-day.today {
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            border-color: #22c55e;
+            color: #fff;
+        }
+        
+        .calendar-day.has-classes {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            border-color: rgba(245,158,11,0.3);
+        }
+        
+        .calendar-day.weekend {
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.5);
+        }
+        
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header-section {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .timetable-container {
+                font-size: 12px;
+            }
+            
+            .timetable th {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+            
+            .timetable td {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+            
+            .calendar-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            
+            .legend {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap animate-in">
+        <a class="back" href="student-dashboard.html">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <div class="card">
+            <div class="header-section">
+                <div class="header-title">
+                    <i class="fa-solid fa-calendar-alt"></i>
+                    My Time Table
+                </div>
+                <div class="header-controls">
+                    <div class="view-toggle active" onclick="toggleView('week')">
+                        <i class="fa-solid fa-calendar-week"></i>
+                        Week View
+                    </div>
+                    <div class="view-toggle" onclick="toggleView('month')">
+                        <i class="fa-solid fa-calendar"></i>
+                        Month View
+                    </div>
+                    <button class="btn btn-secondary" onclick="exportTimetable()">
+                        <i class="fa-solid fa-download"></i>
+                        Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-group">
+                    <select id="semesterFilter" onchange="filterTimetable()">
+                        <option value="all">All Semesters</option>
+                        <option value="current">Current Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search subjects or teachers..." oninput="searchTimetable()">
+                </div>
+            </div>
+            
+            <div class="timetable-container">
+                <table class="timetable" id="timetable">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>9:00-10:00</th>
+                            <th>10:00-11:00</th>
+                            <th>11:00-12:00</th>
+                            <th>12:00-1:00</th>
+                            <th>1:00-2:00</th>
+                            <th>2:00-3:00</th>
+                            <th>3:00-4:00</th>
+                            <th>4:00-5:00</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetableBody">
+                        <!-- Timetable content will be dynamically generated -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #22c55e, #16a34a);"></div>
+                    <div class="legend-text">Regular Lecture</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #f59e0b, #f97316);"></div>
+                    <div class="legend-text">Lab Session</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #6b7280, #4c1d95);"></div>
+                    <div class="legend-text">Break</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #ef4444, #dc2626);"></div>
+                    <div class="legend-text">Exam</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple auth guard
+        (function () {
+            try {
+                const raw = localStorage.getItem('wizup.currentUser');
+                if (!raw) {
+                    window.location.href = 'student-signin.html';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = 'student-signin.html';
+            }
+        })();
+
+        // Enhanced timetable data
+        const timetableData = {
+            current: {
+                monday: [
+                    { time: '9:00-10:00', subject: 'Java Programming', type: 'lecture', teacher: 'Dr. Smith', room: 'Room 101' },
+                    { time: '10:00-11:00', subject: 'Applied System Design', type: 'lecture', teacher: 'Prof. Johnson', room: 'Room 102' },
+                    { time: '11:00-12:00', subject: 'Break', type: 'break', teacher: '', room: '' }
+                ],
+                tuesday: [
+                    { time: '9:00-10:00', subject: 'Software Engineering', type: 'lecture', teacher: 'Dr. Brown', room: 'Room 103' },
+                    { time: '10:00-11:00', subject: 'Minor Project', type: 'lab', teacher: 'Dr. Davis', room: 'Lab 1' },
+                    { time: '11:00-12:00', subject: 'Communication Skills', type: 'lecture', teacher: 'Ms. Wilson', room: 'Room 104' }
+                ],
+                wednesday: [
+                    { time: '9:00-10:00', subject: 'Deep Learning', type: 'lecture', teacher: 'Dr. Lee', room: 'Room 105' },
+                    { time: '10:00-11:00', subject: 'Advanced Machine Learning', type: 'lecture', teacher: 'Dr. Kim', room: 'Room 106' },
+                    { time: '11:00-12:00', subject: 'Lab', type: 'lab', teacher: 'Dr. Chen', room: 'Lab 2' }
+                ],
+                thursday: [
+                    { time: '9:00-10:00', subject: 'Java Programming', type: 'lecture', teacher: 'Dr. Smith', room: 'Room 101' },
+                    { time: '10:00-11:00', subject: 'Competitive Coding - II', type: 'lecture', teacher: 'Prof. Garcia', room: 'Room 107' },
+                    { time: '11:00-12:00', subject: 'Break', type: 'break', teacher: '', room: '' }
+                ],
+                friday: [
+                    { time: '9:00-10:00', subject: 'Software Engineering', type: 'lecture', teacher: 'Dr. Brown', room: 'Room 103' },
+                    { time: '10:00-11:00', subject: 'Open Slot', type: 'study', teacher: '', room: 'Library' },
+                    { time: '11:00-12:00', subject: 'Mentor Meeting', type: 'meeting', teacher: 'Dr. Anderson', room: 'Room 108' }
+                ],
+                saturday: [
+                    { time: '10:00-12:00', subject: 'Workshop', type: 'lab', teacher: 'Dr. White', room: 'Lab 3' },
+                    { time: '12:00-1:00', subject: 'Workshop', type: 'lab', teacher: 'Dr. White', room: 'Lab 3' }
+                ],
+                sunday: [
+                    { time: '10:00-12:00', subject: 'Holiday', type: 'holiday', teacher: '', room: '' }
+                ]
+            }
+        };
+
+        let currentView = 'week';
+        let currentWeekOffset = 0;
+        
+        function toggleView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        function changeWeek(offset) {
+            currentWeekOffset += offset;
+            updateCurrentWeek();
+            renderTimetable();
+        }
+
+        function updateCurrentWeek() {
+            const today = new Date();
+            const currentWeek = getWeekNumber(today);
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay() + (currentWeek - 1) * 7);
+            weekStart.setDate(weekStart.getDate() + 1);
+            
+            const weekEnd = new Date(weekStart);
+            weekStart.setDate(weekStart.getDate() + 6);
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long' };
+            const weekRange = weekStart.toLocaleDateString('en-US', options) + ' - ' + weekEnd.toLocaleDateString('en-US', options);
+            
+            document.getElementById('currentWeek').textContent = weekRange;
+        }
+
+        function getWeekNumber(date) {
+            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+            const pastDaysOfYear = date.getDay();
+            return Math.ceil((date - firstDayOfYear + pastDaysOfYear) / 7);
+        }
+
+        function renderTimetable() {
+            const tbody = document.getElementById('timetableBody');
+            const weekData = getCurrentWeekData();
+            
+            tbody.innerHTML = weekData.map((day, dayIndex) => {
+                return '<tr class="animate-in" style="animation-delay: ' + (dayIndex * 0.05) + 's;">' +
+                    '<td>' + day.day + '</td>' +
+                    day.map((slot, slotIndex) => {
+                        const slotClass = 'time-slot ' + slot.type;
+                        const slotContent = slot.type === 'break' ? 
+                            '<div class="subject-name">' + slot.subject + '</div>' :
+                            '<div class="subject-name">' + slot.subject + '</div>' +
+                            '<div class="time-info"><span class="room">' + slot.room + '</span><span class="teacher">' + slot.teacher + '</span></div>';
+                        
+                        return '<td class="' + slotClass + '" onclick="handleTimeSlotClick(\'' + day.day + '\', \'' + slot.time + '\', \'' + slot.subject + '\', \'' + slot.type + '\')">' + slotContent + '</td>';
+                    }).join('') +
+                    '</tr>';
+            }).join('');
+        }
+
+        function getCurrentWeekData() {
+            const dayNames = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const today = new Date();
+            const currentWeek = getWeekNumber(today);
+            const weekStart = new Date(today.getFullYear(), 0, 1 + (currentWeek - 1) * 7);
+            
+            return dayNames.map((dayName, index) => {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + index);
+                return timetableData.current[dayName] || [];
+            });
+        }
+
+        function handleTimeSlotClick(day, time, subject, type) {
+            const message = 'Time slot selected:\nDay: ' + day + '\nTime: ' + time + '\nSubject: ' + subject + '\nType: ' + type;
+            alert(message);
+        }
+
+        function searchTimetable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const semesterFilter = document.getElementById('semesterFilter').value;
+            
+            const tbody = document.getElementById('timetableBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            Array.from(rows).forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                const matchesSearch = searchTerm && rowText.includes(searchTerm);
+                const matchesSemester = semesterFilter === 'all' || rowText.includes(semesterFilter);
+                
+                if (matchesSearch && matchesSemester) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterTimetable() {
+            searchTimetable();
+        }
+
+        function exportTimetable() {
+            const weekData = getCurrentWeekData();
+            let csvContent = 'Day,Time,Subject,Type,Teacher,Room\n';
+            
+            weekData.forEach((day, dayIndex) => {
+                day.forEach(slot => {
+                    csvContent += day + ',' + slot.time + ',' + slot.subject + ',' + slot.type + ',' + slot.teacher + ',' + slot.room + '\n';
+                });
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'timetable_' + new Date().toISOString().split('T')[0] + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTimetable();
+            updateCurrentWeek();
+        });
+    </script>
+</body>
+</html>
