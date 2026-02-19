@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marks Disputes - WizUP Faculty</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Simple animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .wrap {
+            padding: 24px;
+            max-width: 1200px;
+            margin: 36px auto;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148,163,184,0.2);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        
+        a.back {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        a.back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-3px);
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .controls-section {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .control-group select, .control-group input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .control-group select:focus, .control-group input:focus {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-1px);
+        }
+        
+        .disputes-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .dispute-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .dispute-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .dispute-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .dispute-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        
+        .dispute-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-pending {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: #fff;
+        }
+        
+        .status-resolved {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+        }
+        
+        .status-rejected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        
+        .dispute-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .dispute-content {
+            margin: 16px 0;
+        }
+        
+        .dispute-section {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .dispute-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .dispute-section-content {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.5;
+        }
+        
+        .comment-section {
+            margin: 16px 0;
+        }
+        
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+        }
+        
+        .comment-input:focus {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .comment-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .dispute-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #22c55e;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .marks-comparison {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        
+        .marks-box {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .marks-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .marks-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .original-marks { border-left: 4px solid #f59e0b; }
+        .disputed-marks { border-left: 4px solid #38bdf8; }
+        
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header-section {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .controls-section {
+                flex-direction: column;
+            }
+            
+            .dispute-actions {
+                flex-direction: column;
+            }
+            
+            .marks-comparison {
+                flex-direction: column;
+            }
+            
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap animate-in">
+        <a class="back" href="faculty-dashboard.html">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <div class="card">
+            <div class="header-section">
+                <div class="header-title">
+                    <i class="fa-solid fa-comments"></i>
+                    Marks Disputes
+                </div>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>Action completed successfully!</span>
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter" onchange="filterDisputes()">
+                        <option value="all">All Disputes</option>
+                        <option value="pending">Pending</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="subjectFilter">Subject:</label>
+                    <select id="subjectFilter" onchange="filterDisputes()">
+                        <option value="all">All Subjects</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-secondary" onclick="exportDisputes()">
+                    <i class="fa-solid fa-download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="stat-value" id="pendingCount">3</div>
+                    <div class="stat-label">Pending Disputes</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="resolvedCount">8</div>
+                    <div class="stat-label">Resolved</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-times-circle"></i>
+                    </div>
+                    <div class="stat-value" id="rejectedCount">2</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-percentage"></i>
+                    </div>
+                    <div class="stat-value" id="resolutionRate">80%</div>
+                    <div class="stat-label">Resolution Rate</div>
+                </div>
+            </div>
+            
+            <div class="disputes-container" id="disputesContainer">
+                <!-- Disputes will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Faculty auth guard
+        (function () {
+            try {
+                const raw = localStorage.getItem('wizup.currentFaculty');
+                if (!raw) {
+                    window.location.href = 'faculty-signin.html';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = 'faculty-signin.html';
+            }
+        })();
+
+        // Mock marks disputes data
+        const disputesData = [
+            {
+                id: 'MD001',
+                studentName: 'Alice Johnson',
+                studentId: 'STU001',
+                rollNo: 'CS301001',
+                subject: 'Java Programming',
+                examType: 'Mid Term',
+                originalMarks: 75,
+                disputedMarks: 85,
+                reason: 'I believe my answer for question 3 was correct and deserves full marks',
+                status: 'pending',
+                submittedDate: '2024-01-18',
+                facultyComment: '',
+                resolvedBy: '',
+                resolvedDate: ''
+            },
+            {
+                id: 'MD002',
+                studentName: 'Bob Smith',
+                studentId: 'STU002',
+                rollNo: 'CS301002',
+                subject: 'Software Engineering',
+                examType: 'Internal Assessment',
+                originalMarks: 68,
+                disputedMarks: 75,
+                reason: 'The project requirements were met but marks seem low compared to peers',
+                status: 'resolved',
+                submittedDate: '2024-01-15',
+                facultyComment: 'Reviewed the project. Added 5 marks for documentation quality. Final marks: 73',
+                resolvedBy: 'Dr. Sarah Johnson',
+                resolvedDate: '2024-01-17'
+            },
+            {
+                id: 'MD003',
+                studentName: 'Charlie Brown',
+                studentId: 'STU003',
+                rollNo: 'CS301003',
+                subject: 'Applied System Design',
+                examType: 'Assignment',
+                originalMarks: 45,
+                disputedMarks: 60,
+                reason: 'Assignment was completed on time with all requirements but received low marks',
+                status: 'pending',
+                submittedDate: '2024-01-19',
+                facultyComment: '',
+                resolvedBy: '',
+                resolvedDate: ''
+            },
+            {
+                id: 'MD004',
+                studentName: 'Diana Prince',
+                studentId: 'STU004',
+                rollNo: 'CS301004',
+                subject: 'Deep Learning',
+                examType: 'Practical',
+                originalMarks: 82,
+                disputedMarks: 90,
+                reason: 'Implementation was correct and working, but marks were deducted for unclear reasons',
+                status: 'rejected',
+                submittedDate: '2024-01-12',
+                facultyComment: 'Reviewed the practical submission. Code had several logical errors and didn\'t meet all requirements. Original marks stand.',
+                resolvedBy: 'Dr. Sarah Johnson',
+                resolvedDate: '2024-01-14'
+            }
+        ];
+
+        let filteredDisputes = [...disputesData];
+
+        function initializePage() {
+            const faculty = JSON.parse(localStorage.getItem('wizup.currentFaculty'));
+            
+            // Load faculty subjects
+            const subjectFilter = document.getElementById('subjectFilter');
+            if (faculty.subjects) {
+                faculty.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    subjectFilter.appendChild(option);
+                });
+            }
+            
+            loadDisputes();
+        }
+
+        function loadDisputes() {
+            const container = document.getElementById('disputesContainer');
+            container.innerHTML = '';
+            
+            filteredDisputes.forEach((dispute, index) => {
+                const card = document.createElement('div');
+                card.className = 'dispute-card animate-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                const statusClass = `status-${dispute.status}`;
+                const statusText = dispute.status.charAt(0).toUpperCase() + dispute.status.slice(1);
+                
+                card.innerHTML = `
+                    <div class="dispute-header">
+                        <div>
+                            <div class="dispute-title">${dispute.studentName}</div>
+                            <div class="dispute-subtitle">${dispute.rollNo} • ${dispute.studentId}</div>
+                        </div>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    
+                    <div class="dispute-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Subject</span>
+                            <span class="detail-value">${dispute.subject}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Exam Type</span>
+                            <span class="detail-value">${dispute.examType}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Submitted</span>
+                            <span class="detail-value">${formatDate(dispute.submittedDate)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Dispute ID</span>
+                            <span class="detail-value">${dispute.id}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="marks-comparison">
+                        <div class="marks-box original-marks">
+                            <div class="marks-label">Original Marks</div>
+                            <div class="marks-value">${dispute.originalMarks}</div>
+                        </div>
+                        <div class="marks-box disputed-marks">
+                            <div class="marks-label">Disputed Marks</div>
+                            <div class="marks-value">${dispute.disputedMarks}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="dispute-content">
+                        <div class="dispute-section">
+                            <div class="dispute-section-title">
+                                <i class="fa-solid fa-user"></i>
+                                Student Reason
+                            </div>
+                            <div class="dispute-section-content">${dispute.reason}</div>
+                        </div>
+                        
+                        ${dispute.facultyComment ? `
+                            <div class="dispute-section">
+                                <div class="dispute-section-title">
+                                    <i class="fa-solid fa-comment"></i>
+                                    Faculty Comment
+                                </div>
+                                <div class="dispute-section-content">${dispute.facultyComment}</div>
+                            </div>
+                        ` : ''}
+                        
+                        ${dispute.status === 'resolved' || dispute.status === 'rejected' ? `
+                            <div class="detail-item" style="margin-top: 12px;">
+                                <span class="detail-label">Resolved By</span>
+                                <span class="detail-value">${dispute.resolvedBy} on ${formatDate(dispute.resolvedDate)}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    ${dispute.status === 'pending' ? `
+                        <div class="comment-section">
+                            <div class="dispute-section-title">
+                                <i class="fa-solid fa-reply"></i>
+                                Add Your Comment
+                            </div>
+                            <textarea class="comment-input" 
+                                      id="comment_${dispute.id}" 
+                                      placeholder="Enter your response to this dispute..."></textarea>
+                        </div>
+                        
+                        <div class="dispute-actions">
+                            <button class="btn btn-success" onclick="resolveDispute('${dispute.id}', true)">
+                                <i class="fa-solid fa-check"></i> Accept & Update Marks
+                            </button>
+                            <button class="btn btn-secondary" onclick="resolveDispute('${dispute.id}', false)">
+                                <i class="fa-solid fa-times"></i> Reject Dispute
+                            </button>
+                        </div>
+                    ` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            updateStatistics();
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function resolveDispute(disputeId, accept) {
+            const comment = document.getElementById(`comment_${disputeId}`).value;
+            if (!comment.trim()) {
+                alert('Please provide a comment explaining your decision.');
+                return;
+            }
+            
+            const dispute = disputesData.find(d => d.id === disputeId);
+            if (dispute) {
+                const faculty = JSON.parse(localStorage.getItem('wizup.currentFaculty'));
+                dispute.status = accept ? 'resolved' : 'rejected';
+                dispute.facultyComment = comment;
+                dispute.resolvedBy = faculty.name;
+                dispute.resolvedDate = new Date().toISOString().split('T')[0];
+                
+                // If accepted, update the marks
+                if (accept) {
+                    const marksKey = `${dispute.studentId}_${dispute.subject}_${dispute.examType}`;
+                    localStorage.setItem(marksKey, dispute.disputedMarks);
+                }
+                
+                // Save to localStorage (in production, this would be sent to server)
+                localStorage.setItem(`marks_dispute_${disputeId}`, JSON.stringify(dispute));
+                
+                showSuccess(`Dispute ${accept ? 'resolved' : 'rejected'} successfully!`);
+                loadDisputes();
+            }
+        }
+
+        function filterDisputes() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const subjectFilter = document.getElementById('subjectFilter').value;
+            
+            filteredDisputes = disputesData.filter(dispute => {
+                // Status filter
+                if (statusFilter !== 'all' && dispute.status !== statusFilter) {
+                    return false;
+                }
+                
+                // Subject filter
+                if (subjectFilter !== 'all' && dispute.subject !== subjectFilter) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            loadDisputes();
+        }
+
+        function updateStatistics() {
+            const pending = filteredDisputes.filter(d => d.status === 'pending').length;
+            const resolved = filteredDisputes.filter(d => d.status === 'resolved').length;
+            const rejected = filteredDisputes.filter(d => d.status === 'rejected').length;
+            const total = filteredDisputes.length;
+            const resolutionRate = total > 0 ? Math.round(((resolved + rejected) / total) * 100) : 0;
+            
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('resolvedCount').textContent = resolved;
+            document.getElementById('rejectedCount').textContent = rejected;
+            document.getElementById('resolutionRate').textContent = resolutionRate + '%';
+        }
+
+        function exportDisputes() {
+            let csvContent = 'Dispute ID,Student Name,Roll No,Student ID,Subject,Exam Type,Original Marks,Disputed Marks,Status,Submitted Date,Faculty Comment\n';
+            
+            filteredDisputes.forEach(dispute => {
+                csvContent += `${dispute.id},${dispute.studentName},${dispute.rollNo},${dispute.studentId},${dispute.subject},${dispute.examType},${dispute.originalMarks},${dispute.disputedMarks},${dispute.status},${dispute.submittedDate},"${dispute.facultyComment}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `marks_disputes_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = `<i class="fa-solid fa-check-circle"></i><span>${message}</span>`;
+            successDiv.style.display = 'flex';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage();
+        });
+    </script>
+</body>
+</html>
