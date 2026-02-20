@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>WizUP University Portal - Firebase Edition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ---------- Simple Animations ---------- */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        /* ---------- Simple Hover Effects ---------- */
+        .simple-hover {
+            transition: all 0.2s ease;
+        }
+        .simple-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* ---------- Base ---------- */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #fff;
+            background:
+                url("../bg1.jpg") center/cover no-repeat fixed;
+            position: relative;
+        }
+
+        /* Dark vignette similar to the mockup */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 40%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8));
+            pointer-events: none;
+        }
+
+        /* ---------- Layout ---------- */
+        .page-shell {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            padding: 40px 40px 40px 32px;
+        }
+
+        /* ---------- Top badges row (DS1 header icons) ---------- */
+        .badge-row {
+            position: absolute;
+            top: 0px;
+            left: 40px;
+            display: flex;
+            gap: 8px;
+            z-index: 3;
+        }
+
+        .badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: blink 2s infinite;
+        }
+
+        .badge:nth-child(2) { animation-delay: 0.2s; }
+        .badge:nth-child(3) { animation-delay: 0.4s; }
+        .badge:nth-child(4) { animation-delay: 0.6s; }
+        .badge:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* ---------- Main Content ---------- */
+        .main-content {
+            display: flex;
+            height: 100%;
+            gap: 60px;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        /* ---------- Left Panel ---------- */
+        .left-panel {
+            flex: 1;
+            max-width: 580px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* ---------- Logo Section ---------- */
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo img {
+            width: 75%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .brand-info {
+            flex: 1;
+        }
+
+        .brand-name {
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin: 0;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-tagline {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 8px 0 0;
+            font-weight: 500;
+        }
+
+        /* ---------- Description ---------- */
+        .description {
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+
+        /* ---------- Login Options ---------- */
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 32px;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .student-btn {
+            background: linear-gradient(135deg, rgba(229, 56, 59, 0.9), rgba(178, 31, 45, 0.8));
+            box-shadow: 0 8px 32px rgba(178, 31, 45, 0.4);
+        }
+
+        .student-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(178, 31, 45, 0.5);
+        }
+
+        .faculty-btn {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.9), rgba(22, 163, 74, 0.8));
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.4);
+        }
+
+        .faculty-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(34, 197, 94, 0.5);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.8));
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* ---------- Right Panel ---------- */
+        .right-panel {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crest-wrapper {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #000;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .crest-wrapper:hover {
+            transform: scale(1.02);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9);
+        }
+
+        .crest-wrapper img {
+            max-width: 78%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+            transition: all 0.2s ease;
+        }
+
+        .crest-wrapper:hover img {
+            transform: scale(1.02);
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.8));
+        }
+
+        /* ---------- Features ---------- */
+        .features {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            gap: 32px;
+            z-index: 2;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feature i {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ---------- Firebase Badge ---------- */
+        .firebase-badge {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .firebase-badge i {
+            color: #ffca28;
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 1200px) {
+            .main-content {
+                gap: 40px;
+            }
+            .right-panel {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-shell {
+                padding: 20px;
+            }
+            .main-content {
+                flex-direction: column;
+                gap: 30px;
+                justify-content: center;
+            }
+            .left-panel {
+                max-width: 100%;
+                text-align: center;
+            }
+            .brand-name {
+                font-size: 36px;
+            }
+            .description {
+                font-size: 16px;
+            }
+            .right-panel {
+                width: 200px;
+                height: 200px;
+            }
+            .features {
+                flex-direction: column;
+                gap: 16px;
+                bottom: 20px;
+                left: 20px;
+            }
+            .firebase-badge {
+                top: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <!-- Top badges -->
+        <div class="badge-row">
+            <div class="badge"></div>
+            <div class="badge"></div>
+            <div class="badge"></div>
+            <div class="badge"></div>
+            <div class="badge"></div>
+        </div>
+
+        <!-- Firebase Badge -->
+        <div class="firebase-badge">
+            <i class="fa-solid fa-fire"></i>
+            <span>Powered by Firebase</span>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Panel -->
+            <div class="left-panel animate-in">
+                <!-- Logo Section -->
+                <div class="logo-section">
+                    <div class="logo">
+                        <img src="../LOGO1.png" alt="WizUP Logo" />
+                    </div>
+                    <div class="brand-info">
+                        <h1 class="brand-name">WizUP</h1>
+                        <p class="brand-tagline">University Management Portal</p>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <p class="description">
+                    Experience the future of university management with real-time attendance tracking, 
+                    instant fee payments, and comprehensive academic analytics. Built with Firebase 
+                    for seamless data synchronization across all devices.
+                </p>
+
+                <!-- Login Options -->
+                <div class="login-options">
+                    <a href="student-signin-firebase.html" class="login-btn student-btn simple-hover">
+                        <div class="btn-icon">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <span>Student Portal</span>
+                    </a>
+
+                    <a href="faculty-signin-firebase.html" class="login-btn faculty-btn simple-hover">
+                        <div class="btn-icon">
+                            <i class="fa-solid fa-chalkboard-teacher"></i>
+                        </div>
+                        <span>Faculty Portal</span>
+                    </a>
+
+                    <a href="#" class="login-btn admin-btn simple-hover" onclick="showAdminLogin()">
+                        <div class="btn-icon">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <span>Admin Portal</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="right-panel animate-in">
+                <div class="crest-wrapper">
+                    <img src="../LOGO1.png" alt="WizUP Logo" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Real-time Attendance</span>
+            </div>
+            <div class="feature">
+                <i class="fa-solid fa-credit-card"></i>
+                <span>Digital Fee Payment</span>
+            </div>
+            <div class="feature">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Performance Analytics</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <script>
+        // Admin login handler
+        function showAdminLogin() {
+            const adminEmails = [
+                'robert.williams@wizup.edu',
+                'patricia.davis@wizup.edu'
+            ];
+            const email = prompt('Enter admin email:');
+            
+            if (adminEmails.includes(email)) {
+                // Redirect to faculty login (admin uses same interface)
+                window.location.href = 'faculty-signin-firebase.html';
+            } else {
+                alert('Invalid admin email. Please use your university admin email.');
+            }
+        }
+
+        // Add some interactivity to the crest
+        document.querySelector('.crest-wrapper').addEventListener('click', function() {
+            this.style.animation = 'spin 1s ease-in-out';
+            setTimeout(() => {
+                this.style.animation = '';
+            }, 1000);
+        });
+
+        // Add spin animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

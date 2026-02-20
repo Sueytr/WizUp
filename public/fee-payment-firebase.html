@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Fee Payment - WizUP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(30, 30, 30, 0.9));
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header .logo {
+            width: 70px;
+            height: auto;
+        }
+        
+        .header-title {
+            flex: 1;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .main-container {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .payment-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .fee-section, .payment-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .fee-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .fee-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .fee-item:hover {
+            background: rgba(0, 0, 0, 0.04);
+            transform: translateX(4px);
+        }
+        
+        .fee-item.selected {
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 3px solid #22c55e;
+        }
+        
+        .fee-info {
+            flex: 1;
+        }
+        
+        .fee-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .fee-description {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .fee-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        
+        .total-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .total-label {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .total-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .grand-total {
+            background: rgba(34, 197, 94, 0.1);
+            padding: 16px;
+            border-radius: 8px;
+        }
+        
+        .grand-total .total-amount {
+            color: #22c55e;
+            font-size: 28px;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.05);
+        }
+        
+        .payment-method.selected {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+        
+        .payment-method input[type="radio"] {
+            display: none;
+        }
+        
+        .payment-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #666;
+        }
+        
+        .payment-details {
+            flex: 1;
+        }
+        
+        .payment-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .payment-description {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            transition: all 0.2s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #22c55e;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+        }
+        
+        .pay-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+        }
+        
+        .pay-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+        
+        .pay-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .success-message {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #166534;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .receipt-section {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .receipt-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .receipt-number {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .receipt-details {
+            margin-bottom: 20px;
+        }
+        
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            color: #666;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(34, 197, 94, 0.2);
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .payment-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <img src="../LOGO1.png" alt="WizUP" class="logo" />
+        <h1 class="header-title">Fee Payment</h1>
+        <a href="student-dashboard-firebase.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <i class="fa-solid fa-check-circle"></i>
+            <span id="successText">Payment successful!</span>
+        </div>
+
+        <div class="payment-container">
+            <!-- Fee Breakdown Section -->
+            <div class="fee-section">
+                <h2 class="section-title">Fee Breakdown</h2>
+                
+                <div class="fee-breakdown">
+                    <div class="fee-item" data-fee="tuition" data-amount="50000">
+                        <div class="fee-info">
+                            <div class="fee-name">Tuition Fee</div>
+                            <div class="fee-description">Academic year tuition</div>
+                        </div>
+                        <div class="fee-amount">₹50,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="library" data-amount="5000">
+                        <div class="fee-info">
+                            <div class="fee-name">Library Fee</div>
+                            <div class="fee-description">Library access and resources</div>
+                        </div>
+                        <div class="fee-amount">₹5,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="laboratory" data-amount="8000">
+                        <div class="fee-info">
+                            <div class="fee-name">Laboratory Fee</div>
+                            <div class="fee-description">Lab equipment and maintenance</div>
+                        </div>
+                        <div class="fee-amount">₹8,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="examination" data-amount="3000">
+                        <div class="fee-info">
+                            <div class="fee-name">Examination Fee</div>
+                            <div class="fee-description">Semester examination costs</div>
+                        </div>
+                        <div class="fee-amount">₹3,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="hostel" data-amount="25000">
+                        <div class="fee-info">
+                            <div class="fee-name">Hostel Fee</div>
+                            <div class="fee-description">Room and boarding</div>
+                        </div>
+                        <div class="fee-amount">₹25,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="mess" data-amount="15000">
+                        <div class="fee-info">
+                            <div class="fee-name">Mess Fee</div>
+                            <div class="fee-description">Food and dining services</div>
+                        </div>
+                        <div class="fee-amount">₹15,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="transportation" data-amount="6000">
+                        <div class="fee-info">
+                            <div class="fee-name">Transportation Fee</div>
+                            <div class="fee-description">Bus transportation</div>
+                        </div>
+                        <div class="fee-amount">₹6,000</div>
+                    </div>
+                    
+                    <div class="fee-item" data-fee="other" data-amount="2000">
+                        <div class="fee-info">
+                            <div class="fee-name">Other Fees</div>
+                            <div class="fee-description">Miscellaneous charges</div>
+                        </div>
+                        <div class="fee-amount">₹2,000</div>
+                    </div>
+                </div>
+                
+                <div class="total-section">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal:</span>
+                        <span class="total-amount" id="subtotal">₹114,000</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">Discount (5%):</span>
+                        <span class="total-amount" id="discount">-₹5,700</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span class="total-label">Total Amount:</span>
+                        <span class="total-amount" id="grandTotal">₹108,300</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="payment-section">
+                <h2 class="section-title">Payment Method</h2>
+                
+                <div class="payment-methods">
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="card" checked>
+                        <div class="payment-icon">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        <div class="payment-details">
+                            <div class="payment-name">Credit/Debit Card</div>
+                            <div class="payment-description">Pay using Visa, Mastercard, etc.</div>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="upi">
+                        <div class="payment-icon">
+                            <i class="fa-solid fa-mobile-alt"></i>
+                        </div>
+                        <div class="payment-details">
+                            <div class="payment-name">UPI</div>
+                            <div class="payment-description">Pay using UPI apps</div>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-method">
+                        <input type="radio" name="paymentMethod" value="netbanking">
+                        <div class="payment-icon">
+                            <i class="fa-solid fa-university"></i>
+                        </div>
+                        <div class="payment-details">
+                            <div class="payment-name">Net Banking</div>
+                            <div class="payment-description">Direct bank transfer</div>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardName">Cardholder Name</label>
+                    <input type="text" id="cardName" placeholder="John Doe">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label for="expiry">Expiry Date</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123" maxlength="3">
+                    </div>
+                </div>
+                
+                <button class="pay-btn" id="payBtn" onclick="processPayment()">
+                    <i class="fa-solid fa-lock"></i> Pay ₹108,300
+                </button>
+            </div>
+        </div>
+
+        <!-- Receipt Section (Hidden initially) -->
+        <div class="receipt-section" id="receiptSection">
+            <div class="receipt-header">
+                <div class="receipt-title">Payment Receipt</div>
+                <div class="receipt-number">Receipt #: <span id="receiptNumber">WZ2024001</span></div>
+            </div>
+            
+            <div class="receipt-details">
+                <div class="receipt-row">
+                    <span>Transaction ID:</span>
+                    <span id="transactionId">TXN123456789</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Payment Date:</span>
+                    <span id="paymentDate">January 19, 2024</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Payment Method:</span>
+                    <span id="paymentMethodDisplay">Credit Card</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Amount Paid:</span>
+                    <span style="color: #22c55e; font-weight: 700;">₹108,300</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Status:</span>
+                    <span style="color: #22c55e; font-weight: 700;">✓ Payment Successful</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="download-btn" onclick="downloadReceipt()">
+                    <i class="fa-solid fa-download"></i> Download Receipt
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let selectedFees = [];
+        let totalAmount = 0;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication state
+            window.firebaseUtils.onAuthStateChanged(async (user) => {
+                if (!user) {
+                    window.location.href = 'student-signin-firebase.html';
+                    return;
+                }
+                
+                currentUser = user;
+                initializeFeeSelection();
+            });
+        });
+
+        // Initialize fee selection
+        function initializeFeeSelection() {
+            const feeItems = document.querySelectorAll('.fee-item');
+            
+            feeItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Toggle selection
+                    feeItems.forEach(f => f.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    updateTotal();
+                });
+            });
+            
+            // Select all by default
+            feeItems.forEach(item => item.classList.add('selected'));
+            updateTotal();
+        }
+
+        // Update total amount
+        function updateTotal() {
+            const selectedItems = document.querySelectorAll('.fee-item.selected');
+            let subtotal = 0;
+            
+            selectedItems.forEach(item => {
+                const amount = parseInt(item.dataset.amount);
+                subtotal += amount;
+            });
+            
+            const discount = Math.round(subtotal * 0.05);
+            const total = subtotal - discount;
+            
+            document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString()}`;
+            document.getElementById('discount').textContent = `-₹${discount.toLocaleString()}`;
+            document.getElementById('grandTotal').textContent = `₹${total.toLocaleString()}`;
+            
+            totalAmount = total;
+            selectedFees = Array.from(selectedItems).map(item => ({
+                name: item.querySelector('.fee-name').textContent,
+                amount: parseInt(item.dataset.amount)
+            }));
+            
+            // Update pay button
+            document.getElementById('payBtn').innerHTML = `<i class="fa-solid fa-lock"></i> Pay ₹${total.toLocaleString()}`;
+        }
+
+        // Process payment
+        async function processPayment() {
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardName = document.getElementById('cardName').value;
+            const expiry = document.getElementById('expiry').value;
+            const cvv = document.getElementById('cvv').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            // Basic validation
+            if (!cardNumber || !cardName || !expiry || !cvv) {
+                alert('Please fill all payment details');
+                return;
+            }
+
+            if (selectedFees.length === 0) {
+                alert('Please select at least one fee to pay');
+                return;
+            }
+
+            // Disable pay button
+            const payBtn = document.getElementById('payBtn');
+            payBtn.disabled = true;
+            payBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                // Simulate payment processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // Save payment record to Firestore
+                const paymentRecord = {
+                    studentId: currentUser.uid,
+                    studentEmail: currentUser.email,
+                    fees: selectedFees,
+                    subtotal: totalAmount + Math.round(totalAmount * 0.05),
+                    discount: Math.round(totalAmount * 0.05),
+                    totalAmount: totalAmount,
+                    paymentMethod: paymentMethod,
+                    cardDetails: {
+                        last4: cardNumber.slice(-4),
+                        name: cardName
+                    },
+                    transactionId: `TXN${Date.now()}`,
+                    receiptNumber: `WZ${new Date().getFullYear()}${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`,
+                    status: 'completed',
+                    timestamp: new Date().toISOString()
+                };
+
+                const result = await window.firebaseUtils.addDocument('payments', paymentRecord);
+
+                if (result.success) {
+                    // Show success and receipt
+                    showSuccessAndReceipt(paymentRecord);
+                } else {
+                    throw new Error('Failed to save payment record');
+                }
+
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed. Please try again.');
+                payBtn.disabled = false;
+                payBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Pay ₹${totalAmount.toLocaleString()}`;
+            }
+        }
+
+        // Show success and receipt
+        function showSuccessAndReceipt(paymentRecord) {
+            // Show success message
+            document.getElementById('successText').textContent = 'Payment successful! Receipt generated.';
+            document.getElementById('successMessage').style.display = 'flex';
+
+            // Populate receipt
+            document.getElementById('receiptNumber').textContent = paymentRecord.receiptNumber;
+            document.getElementById('transactionId').textContent = paymentRecord.transactionId;
+            document.getElementById('paymentDate').textContent = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('paymentMethodDisplay').textContent = 
+                paymentRecord.paymentMethod === 'card' ? 'Credit Card' :
+                paymentRecord.paymentMethod === 'upi' ? 'UPI' : 'Net Banking';
+
+            // Show receipt section
+            document.getElementById('receiptSection').style.display = 'block';
+
+            // Scroll to receipt
+            document.getElementById('receiptSection').scrollIntoView({ behavior: 'smooth' });
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 5000);
+        }
+
+        // Download receipt
+        function downloadReceipt() {
+            const receiptData = {
+                receiptNumber: document.getElementById('receiptNumber').textContent,
+                transactionId: document.getElementById('transactionId').textContent,
+                paymentDate: document.getElementById('paymentDate').textContent,
+                paymentMethod: document.getElementById('paymentMethodDisplay').textContent,
+                amount: totalAmount,
+                fees: selectedFees
+            };
+
+            // Create receipt text
+            const receiptText = `
+WIZUP UNIVERSITY - PAYMENT RECEIPT
+=====================================
+Receipt Number: ${receiptData.receiptNumber}
+Transaction ID: ${receiptData.transactionId}
+Payment Date: ${receiptData.paymentDate}
+Payment Method: ${receiptData.paymentMethod}
+
+FEES PAID:
+${receiptData.fees.map(fee => `• ${fee.name}: ₹${fee.amount.toLocaleString()}`).join('\n')}
+
+-------------------------------------
+Subtotal: ₹${(totalAmount + Math.round(totalAmount * 0.05)).toLocaleString()}
+Discount (5%): ₹${Math.round(totalAmount * 0.05).toLocaleString()}
+Total Paid: ₹${totalAmount.toLocaleString()}
+
+=====================================
+This is a computer-generated receipt.
+No signature required.
+            `;
+
+            // Create and download file
+            const blob = new Blob([receiptText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `receipt_${receiptData.receiptNumber}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Format card number input
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            if (formattedValue.length > 19) {
+                formattedValue = formattedValue.slice(0, 19);
+            }
+            e.target.value = formattedValue;
+        });
+
+        // Format expiry date input
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Restrict CVV input
+        document.getElementById('cvv').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+        });
+    </script>
+</body>
+</html>

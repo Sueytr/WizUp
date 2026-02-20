@@ -1,0 +1,133 @@
+//Students :
+Aarav Sharma
+
+Riya Verma
+
+Aditya Singh
+
+Sneha Kapoor
+
+Kunal Mehta
+
+Priya Nair
+
+Arjun Gupta
+
+Neha Yadav
+
+Rohit Malhotra
+
+Ananya Iyer
+
+Sarthak Jain
+
+Mehak Arora
+
+Harsh Vardhan
+
+Kavya Reddy
+
+Devansh Chauhan
+
+Simran Kaur
+
+Yash Thakur
+
+Ishita Bansal
+
+Manav Joshi
+
+Pooja Choudhary
+
+Lakshya Bhatia
+
+Tanvi Desai
+
+Rohan Kulkarni
+
+Muskan Saini
+
+Shubham Tiwari
+
+Aditi Mishra
+
+Nikhil Saxena
+
+Palak Aggarwal
+
+Abhishek Dubey
+
+Kritika Sehgal
+
+Varun Anand
+
+Ritu Rajput
+
+Siddharth Pillai
+
+Nandini Rao
+
+Ayush Pandey
+
+Bhavya Shukla
+
+Prateek Sood
+
+Diya Narang
+
+Gaurav Tripathi
+
+Shruti Menon
+
+
+
+// Faculty :
+Mr. Rahul Singh
+
+Ms. Jasleen Kaur
+
+Mr. Anup Kumar Singh
+
+Ms. Jasmeet Kaur
+
+Ms. Shivani Chadha
+
+Er. Tarsem Singh
+
+Ms. Gurjit Kaur Parmar
+
+Ms. Bhawan Preet Kaur
+
+Ms. Ambika
+
+Dr. Kiran Shashwat
+
+
+// HOD name
+Ms.Priti Sharma
+
+
+// Subjects :
+📘 Core / Technical Subjects
+
+23TDT-274 – Aptitude_TPP
+
+23CAH-256 – Multimedia and Animation
+
+23CAP-252 – Database Management System Lab
+
+23CAT-251 – Database Management System
+
+23CAT-253 – Artificial Intelligence
+
+MEO-361 – Automobile Engineering
+
+📗 Skill / Language / Value-Added Subjects
+
+23TDP-273 – Soft Skill_TPP
+
+LFO-441 – French
+
+23UCT-297 – Gender Equality and Empowerment
+
+TTO-202 – Professional Tour and Planning

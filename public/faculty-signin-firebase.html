@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faculty Sign In - WizUP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ---------- Simple Animations ---------- */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        /* ---------- Simple Hover Effects ---------- */
+        .simple-hover {
+            transition: all 0.2s ease;
+        }
+        .simple-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .signin-card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148,163,184,0.2);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            width: 400px;
+        }
+
+        .signin-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: auto;
+            margin-bottom: 16px;
+        }
+        
+        .login-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        
+        .login-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .password-group {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+        
+        .help-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .help-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        
+        .help-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.4);
+            color: #fff;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="signin-card animate-in">
+        <div class="logo-section">
+            <img src="../LOGO1.png" alt="WizUP" class="logo" />
+            <h1 class="login-title">Faculty Portal</h1>
+            <p class="login-subtitle">Access your faculty dashboard</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="faculty@university.edu" required autocomplete="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="password-group">
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+                    <button type="button" class="password-toggle" onclick="togglePassword()">
+                        <i class="fa-solid fa-eye" id="passwordIcon"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                <span id="btnText">Sign In</span>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </button>
+        </form>
+        
+        <div class="divider">or</div>
+        
+        <div class="help-links">
+            <a href="#" class="help-link" onclick="showHelp('forgot')">Forgot Password?</a>
+            <span style="margin: 0 8px;">•</span>
+            <a href="#" class="help-link" onclick="showHelp('support')">Need Support?</a>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // Faculty authentication with Firebase
+        (function () {
+            const form = document.getElementById("loginForm");
+            const errorEl = document.getElementById("errorMessage");
+            const btnText = document.getElementById("btnText");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+            const loginBtn = document.getElementById("loginBtn");
+
+            function showError(message) {
+                errorEl.textContent = message;
+                errorEl.classList.add("show");
+                setTimeout(() => {
+                    errorEl.classList.remove("show");
+                }, 5000);
+            }
+
+            function setLoading(isLoading) {
+                loginBtn.disabled = isLoading;
+                btnText.style.display = isLoading ? "none" : "block";
+                loadingSpinner.style.display = isLoading ? "block" : "none";
+            }
+
+            // Check if user is already logged in
+            window.firebaseUtils.onAuthStateChanged(async (user) => {
+                if (user) {
+                    // Get user data from Firestore
+                    const userDoc = await window.firebaseUtils.getDocument("users", user.uid);
+                    if (userDoc.success && userDoc.data) {
+                        const userData = userDoc.data;
+                        if (userData.role === "faculty") {
+                            // Redirect to faculty dashboard
+                            window.location.href = "faculty-dashboard-firebase.html";
+                        } else {
+                            showError("This account is not a faculty account");
+                            await window.firebaseUtils.signOut();
+                        }
+                    }
+                }
+            });
+
+            if (form) {
+                form.addEventListener("submit", async function (evt) {
+                    evt.preventDefault();
+                    setLoading(true);
+
+                    const email = (form.email && form.email.value || "").trim();
+                    const password = form.password && form.password.value || "";
+
+                    if (!email || !password) {
+                        showError("Please enter both email and password.");
+                        setLoading(false);
+                        return;
+                    }
+
+                    try {
+                        // Sign in with Firebase
+                        const result = await window.firebaseUtils.signIn(email, password);
+                        
+                        if (result.success) {
+                            console.log("Faculty login successful");
+                            // Redirect will happen automatically via onAuthStateChanged
+                        } else {
+                            showError("Invalid email or password: " + result.error);
+                        }
+                    } catch (error) {
+                        showError("Login failed: " + error.message);
+                    }
+
+                    setLoading(false);
+                });
+            }
+
+            // Toggle password visibility
+            function togglePassword() {
+                const passwordInput = document.getElementById("password");
+                const passwordIcon = document.getElementById("passwordIcon");
+                
+                if (passwordInput.type === "password") {
+                    passwordInput.type = "text";
+                    passwordIcon.className = "fa-solid fa-eye-slash";
+                } else {
+                    passwordInput.type = "password";
+                    passwordIcon.className = "fa-solid fa-eye";
+                }
+            }
+
+            // Help functions
+            function showHelp(type) {
+                if (type === 'forgot') {
+                    showError("Password reset feature coming soon. Please contact IT support at support@wizup.edu");
+                } else if (type === 'support') {
+                    showError("For technical support, please email support@wizup.edu or call 1-800-WIZUP");
+                }
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Internal Marks - WizUP Faculty</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Simple animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .wrap {
+            padding: 24px;
+            max-width: 1200px;
+            margin: 36px auto;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148,163,184,0.2);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        
+        a.back {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        a.back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-3px);
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .controls-section {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .control-group select, .control-group input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .control-group select:focus, .control-group input:focus {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #38bdf8);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .marks-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: none;
+            letter-spacing: 0.5px;
+            font-size: 11px;
+        }
+        
+        .marks-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+            color: #fff;
+        }
+        
+        .marks-table tr:hover td {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .marks-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .marks-input {
+            width: 80px;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .marks-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .marks-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .student-name {
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .student-id {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .grade-a { background: linear-gradient(135deg, #27ae60, #2ecc71); color: #fff; }
+        .grade-b { background: linear-gradient(135deg, #3498db, #5dade2); color: #fff; }
+        .grade-c { background: linear-gradient(135deg, #f39c12, #f1c40f); color: #fff; }
+        .grade-d { background: linear-gradient(135deg, #e67e22, #d68910); color: #fff; }
+        .grade-f { background: linear-gradient(135deg, #e74c3c, #c0392b); color: #fff; }
+        
+        .warning-message {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #22c55e;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header-section {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .controls-section {
+                flex-direction: column;
+            }
+            
+            .marks-table {
+                font-size: 12px;
+            }
+            
+            .marks-table th {
+                padding: 10px 8px;
+                font-size: 10px;
+            }
+            
+            .marks-table td {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap animate-in">
+        <a class="back" href="faculty-dashboard.html">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <div class="card">
+            <div class="header-section">
+                <div class="header-title">
+                    <i class="fa-solid fa-file-upload"></i>
+                    Upload Internal Marks
+                </div>
+            </div>
+            
+            <div class="warning-message">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>You can only upload marks for subjects assigned to you. Other faculty subjects are restricted.</span>
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                <i class="fa-solid fa-check-circle"></i>
+                <span>Marks uploaded successfully!</span>
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <span>Please correct the errors before submitting.</span>
+            </div>
+            
+            <div class="controls-section">
+                <div class="control-group">
+                    <label for="subjectSelect">Subject:</label>
+                    <select id="subjectSelect" onchange="loadStudents()">
+                        <option value="">Select Subject</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="examType">Exam Type:</label>
+                    <select id="examType" onchange="loadStudents()">
+                        <option value="">Select Type</option>
+                        <option value="midterm">Mid Term</option>
+                        <option value="internal">Internal Assessment</option>
+                        <option value="assignment">Assignment</option>
+                        <option value="practical">Practical</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="maxMarks">Max Marks:</label>
+                    <input type="number" id="maxMarks" value="100" min="1" max="100" onchange="updateGrades()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="classSelect">Class:</label>
+                    <select id="classSelect" onchange="loadStudents()">
+                        <option value="">Select Class</option>
+                        <option value="A">Class A</option>
+                        <option value="B">Class B</option>
+                        <option value="C">Class C</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveMarks()">
+                    <i class="fa-solid fa-save"></i>
+                    Save Marks
+                </button>
+                
+                <button class="btn btn-secondary" onclick="exportMarks()">
+                    <i class="fa-solid fa-download"></i>
+                    Export
+                </button>
+            </div>
+            
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="stat-value" id="totalStudents">0</div>
+                    <div class="stat-label">Total Students</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="stat-value" id="avgMarks">0</div>
+                    <div class="stat-label">Average Marks</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div class="stat-value" id="highestMarks">0</div>
+                    <div class="stat-label">Highest Marks</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-percentage"></i>
+                    </div>
+                    <div class="stat-value" id="passPercentage">0%</div>
+                    <div class="stat-label">Pass Percentage</div>
+                </div>
+            </div>
+            
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>Student ID</th>
+                        <th>Marks Obtained</th>
+                        <th>Grade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="marksTableBody">
+                    <!-- Students will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Faculty auth guard
+        (function () {
+            try {
+                const raw = localStorage.getItem('wizup.currentFaculty');
+                if (!raw) {
+                    window.location.href = 'faculty-signin.html';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = 'faculty-signin.html';
+            }
+        })();
+
+        // Mock student data
+        const studentsData = [
+            { rollNo: 'CS301001', name: 'Alice Johnson', studentId: 'STU001' },
+            { rollNo: 'CS301002', name: 'Bob Smith', studentId: 'STU002' },
+            { rollNo: 'CS301003', name: 'Charlie Brown', studentId: 'STU003' },
+            { rollNo: 'CS301004', name: 'Diana Prince', studentId: 'STU004' },
+            { rollNo: 'CS301005', name: 'Edward Norton', studentId: 'STU005' },
+            { rollNo: 'CS301006', name: 'Fiona Green', studentId: 'STU006' },
+            { rollNo: 'CS301007', name: 'George Wilson', studentId: 'STU007' },
+            { rollNo: 'CS301008', name: 'Hannah Montana', studentId: 'STU008' }
+        ];
+
+        let currentMarks = {};
+
+        function initializePage() {
+            const faculty = JSON.parse(localStorage.getItem('wizup.currentFaculty'));
+            
+            // Load faculty subjects
+            const subjectSelect = document.getElementById('subjectSelect');
+            if (faculty.subjects) {
+                faculty.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    subjectSelect.appendChild(option);
+                });
+            }
+        }
+
+        function loadStudents() {
+            const subject = document.getElementById('subjectSelect').value;
+            const examType = document.getElementById('examType').value;
+            const classSection = document.getElementById('classSelect').value;
+            
+            if (!subject || !examType || !classSection) {
+                document.getElementById('marksTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center;">Please select subject, exam type, and class</td></tr>';
+                document.getElementById('statsSection').style.display = 'none';
+                return;
+            }
+            
+            const tbody = document.getElementById('marksTableBody');
+            tbody.innerHTML = '';
+            
+            studentsData.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.className = 'animate-in';
+                row.style.animationDelay = `${index * 0.05}s`;
+                
+                const marksKey = `${student.studentId}_${subject}_${examType}`;
+                const savedMarks = localStorage.getItem(marksKey);
+                const marks = savedMarks ? parseInt(savedMarks) : '';
+                
+                row.innerHTML = `
+                    <td>${student.rollNo}</td>
+                    <td>
+                        <div class="student-name">${student.name}</div>
+                    </td>
+                    <td>
+                        <div class="student-id">${student.studentId}</div>
+                    </td>
+                    <td>
+                        <input type="number" 
+                               class="marks-input" 
+                               id="marks_${student.studentId}"
+                               value="${marks}"
+                               min="0" 
+                               max="100"
+                               onchange="updateGrade('${student.studentId}', this.value)">
+                    </td>
+                    <td>
+                        <span class="grade-badge" id="grade_${student.studentId}">
+                            ${marks ? calculateGrade(marks) : '-'}
+                        </span>
+                    </td>
+                    <td>
+                        <span id="status_${student.studentId}">
+                            ${marks ? (marks >= 40 ? 'Pass' : 'Fail') : '-'}
+                        </span>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('statsSection').style.display = 'grid';
+            updateStatistics();
+        }
+
+        function updateGrade(studentId, marks) {
+            const grade = calculateGrade(marks);
+            const gradeElement = document.getElementById(`grade_${studentId}`);
+            const statusElement = document.getElementById(`status_${studentId}`);
+            
+            if (gradeElement) {
+                gradeElement.textContent = marks ? grade : '-';
+                gradeElement.className = marks ? `grade-badge grade-${grade.toLowerCase()}` : 'grade-badge';
+            }
+            
+            if (statusElement) {
+                statusElement.textContent = marks ? (marks >= 40 ? 'Pass' : 'Fail') : '-';
+            }
+            
+            updateStatistics();
+        }
+
+        function calculateGrade(marks) {
+            if (!marks) return '-';
+            const numMarks = parseInt(marks);
+            if (numMarks >= 90) return 'A';
+            if (numMarks >= 80) return 'B';
+            if (numMarks >= 70) return 'C';
+            if (numMarks >= 60) return 'D';
+            return 'F';
+        }
+
+        function updateStatistics() {
+            const subject = document.getElementById('subjectSelect').value;
+            const examType = document.getElementById('examType').value;
+            
+            const marks = [];
+            studentsData.forEach(student => {
+                const marksInput = document.getElementById(`marks_${student.studentId}`);
+                if (marksInput && marksInput.value) {
+                    marks.push(parseInt(marksInput.value));
+                }
+            });
+            
+            if (marks.length === 0) {
+                document.getElementById('totalStudents').textContent = '0';
+                document.getElementById('avgMarks').textContent = '0';
+                document.getElementById('highestMarks').textContent = '0';
+                document.getElementById('passPercentage').textContent = '0%';
+                return;
+            }
+            
+            const total = marks.length;
+            const avg = Math.round(marks.reduce((a, b) => a + b, 0) / total);
+            const highest = Math.max(...marks);
+            const passCount = marks.filter(m => m >= 40).length;
+            const passPercentage = Math.round((passCount / total) * 100);
+            
+            document.getElementById('totalStudents').textContent = total;
+            document.getElementById('avgMarks').textContent = avg;
+            document.getElementById('highestMarks').textContent = highest;
+            document.getElementById('passPercentage').textContent = passPercentage + '%';
+        }
+
+        function saveMarks() {
+            const subject = document.getElementById('subjectSelect').value;
+            const examType = document.getElementById('examType').value;
+            const classSection = document.getElementById('classSelect').value;
+            
+            if (!subject || !examType || !classSection) {
+                showError('Please select subject, exam type, and class');
+                return;
+            }
+            
+            let hasErrors = false;
+            
+            // Validate marks
+            studentsData.forEach(student => {
+                const marksInput = document.getElementById(`marks_${student.studentId}`);
+                if (marksInput && marksInput.value) {
+                    const marks = parseInt(marksInput.value);
+                    if (marks < 0 || marks > 100) {
+                        hasErrors = true;
+                        marksInput.style.borderColor = '#ef4444';
+                    } else {
+                        marksInput.style.borderColor = '';
+                    }
+                }
+            });
+            
+            if (hasErrors) {
+                showError('Please enter valid marks (0-100)');
+                return;
+            }
+            
+            // Save all marks
+            studentsData.forEach(student => {
+                const marksInput = document.getElementById(`marks_${student.studentId}`);
+                if (marksInput) {
+                    const marksKey = `${student.studentId}_${subject}_${examType}`;
+                    localStorage.setItem(marksKey, marksInput.value || '0');
+                }
+            });
+            
+            // Show success message
+            showSuccess('Marks uploaded successfully!');
+        }
+
+        function exportMarks() {
+            const subject = document.getElementById('subjectSelect').value;
+            const examType = document.getElementById('examType').value;
+            const classSection = document.getElementById('classSelect').value;
+            
+            if (!subject || !examType || !classSection) {
+                showError('Please select subject, exam type, and class');
+                return;
+            }
+            
+            let csvContent = 'Roll No,Student Name,Student ID,Marks,Grade,Status\n';
+            
+            studentsData.forEach(student => {
+                const marksInput = document.getElementById(`marks_${student.studentId}`);
+                const marks = marksInput ? marksInput.value : '';
+                const grade = calculateGrade(marks);
+                const status = marks ? (marks >= 40 ? 'Pass' : 'Fail') : '-';
+                
+                csvContent += `${student.rollNo},${student.name},${student.studentId},${marks},${grade},${status}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${subject}_${examType}_${classSection}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = `<i class="fa-solid fa-check-circle"></i><span>${message}</span>`;
+            successDiv.style.display = 'flex';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `<i class="fa-solid fa-exclamation-circle"></i><span>${message}</span>`;
+            errorDiv.style.display = 'flex';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePage();
+        });
+    </script>
+</body>
+</html>

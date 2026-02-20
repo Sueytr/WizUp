@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>My Courses & Lecture Plan - WizUP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Simple animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: slideIn 0.4s ease-out; }
+        
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background: url("../bg1.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .wrap {
+            padding: 24px;
+            max-width: 1400px;
+            margin: 36px auto;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85), rgba(30,41,59,0.8));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(148,163,184,0.2);
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+        }
+        
+        a.back {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        a.back:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-3px);
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .view-toggle.active {
+            background: #22c55e;
+            border-color: #22c55e;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            flex: 1;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+        }
+        
+        .search-box input:focus {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .filter-section {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+        }
+        
+        .filter-group select {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+        
+        .filter-group select:focus {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            color: #22c55e;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+        
+        .course-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            border-color: rgba(255,255,255,0.25);
+        }
+        
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .course-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .course-code {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-excellent {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: #fff;
+        }
+        
+        .status-good {
+            background: linear-gradient(135deg, #3498db, #5dade2);
+            color: #fff;
+        }
+        
+        .status-average {
+            background: linear-gradient(135deg, #f39c12, #f1c40f);
+            color: #fff;
+        }
+        
+        .status-risk {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+        }
+        
+        .course-details {
+            margin: 16px 0;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .detail-label {
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            color: #fff;
+        }
+        
+        .attendance-section {
+            margin: 16px 0;
+        }
+        
+        .attendance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .attendance-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .attendance-percentage {
+            font-size: 18px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        
+        .attendance-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .attendance-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .course-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .action-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .action-btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .action-btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .lecture-plan {
+            margin: 24px 0;
+            padding: 24px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+        }
+        
+        .lecture-plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .lecture-plan-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .lecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        .lecture-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .lecture-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+        }
+        
+        .lecture-time {
+            font-size: 16px;
+            font-weight: 600;
+            color: #22c55e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .lecture-details {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.5;
+        }
+        
+        .lecture-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header-section {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .lecture-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-section {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap animate-in">
+        <a class="back" href="student-dashboard.html">
+            <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+        </a>
+        
+        <div class="card">
+            <div class="header-section">
+                <div class="header-title">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    My Courses & Lecture Plan
+                </div>
+                <div class="header-controls">
+                    <div class="view-toggle active" onclick="toggleView('courses')">
+                        <i class="fa-solid fa-book"></i>
+                        Courses
+                    </div>
+                    <div class="view-toggle" onclick="toggleView('lecture')">
+                        <i class="fa-solid fa-calendar-alt"></i>
+                        Lecture Plan
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search courses..." oninput="filterCourses()">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-group">
+                    <select id="semesterFilter" onchange="filterCourses()">
+                        <option value="all">All Semesters</option>
+                        <option value="current">Current Semester</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <select id="statusFilter" onchange="filterCourses()">
+                        <option value="all">All Status</option>
+                        <option value="excellent">Excellent (≥85%)</option>
+                        <option value="good">Good (75-84%)</option>
+                        <option value="average">Average (70-74%)</option>
+                        <option value="risk">At Risk (<70%)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="stats-section" id="statsSection">
+                <div class="stat-card animate-in pulse-hover" style="animation-delay: 0.1s;">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                    <div class="stat-value" id="totalCourses">0</div>
+                    <div class="stat-label">Total Courses</div>
+                </div>
+                
+                <div class="stat-card animate-in pulse-hover" style="animation-delay: 0.2s;">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="stat-value" id="avgAttendance">0%</div>
+                    <div class="stat-label">Avg Attendance</div>
+                </div>
+                
+                <div class="stat-card animate-in pulse-hover" style="animation-delay: 0.3s;">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value" id="completedCourses">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                
+                <div class="stat-card animate-in pulse-hover" style="animation-delay: 0.4s;">
+                    <div class="stat-icon">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-value" id="atRiskCourses">0</div>
+                    <div class="stat-label">At Risk</div>
+                </div>
+            </div>
+            
+            <div class="courses-grid" id="coursesView">
+                <!-- Courses will be dynamically added here -->
+            </div>
+            
+            <div class="lecture-plan" id="lectureView" style="display: none;">
+                <div class="lecture-plan-header">
+                    <div class="lecture-plan-title">
+                        <i class="fa-solid fa-calendar-alt"></i>
+                        Weekly Lecture Schedule
+                    </div>
+                    <button class="action-btn btn-secondary" onclick="exportLecturePlan()">
+                        <i class="fa-solid fa-download"></i>
+                        Export Schedule
+                    </button>
+                </div>
+                
+                <div class="lecture-grid" id="lectureGrid">
+                    <!-- Lecture items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple auth guard
+        (function () {
+            try {
+                const raw = localStorage.getItem('wizup.currentUser');
+                if (!raw) {
+                    window.location.href = 'student-signin.html';
+                    return;
+                }
+            } catch (e) {
+                window.location.href = 'student-signin.html';
+            }
+        })();
+
+        // Enhanced course data with additional details
+        const enhancedCoursesData = [
+            {
+                id: 'java-programming',
+                code: 'CS301',
+                name: 'Java Programming',
+                semester: 3,
+                credits: 4,
+                total: 60,
+                attended: 54,
+                minRequired: 75,
+                teacher: 'Dr. Sarah Johnson',
+                room: 'Room 101',
+                schedule: 'Mon, Wed, Fri',
+                time: '9:00-10:00',
+                type: 'Core',
+                status: 'active'
+            },
+            {
+                id: 'applied-system-design',
+                code: 'CS302',
+                name: 'Applied System Design',
+                semester: 3,
+                credits: 3,
+                total: 60,
+                attended: 45,
+                minRequired: 75,
+                teacher: 'Prof. Michael Chen',
+                room: 'Room 102',
+                schedule: 'Mon, Thu',
+                time: '10:00-11:00',
+                type: 'Core',
+                status: 'active'
+            },
+            {
+                id: 'software-engineering',
+                code: 'CS303',
+                name: 'Software Engineering',
+                semester: 3,
+                credits: 4,
+                total: 60,
+                attended: 55,
+                minRequired: 75,
+                teacher: 'Dr. Emily Davis',
+                room: 'Room 103',
+                schedule: 'Tue, Fri',
+                time: '9:00-10:00',
+                type: 'Core',
+                status: 'active'
+            },
+            {
+                id: 'deep-learning',
+                code: 'CS401',
+                name: 'Deep Learning',
+                semester: 4,
+                credits: 3,
+                total: 60,
+                attended: 53,
+                minRequired: 75,
+                teacher: 'Dr. Alex Kim',
+                room: 'Room 105',
+                schedule: 'Wed',
+                time: '14:00-16:00',
+                type: 'Elective',
+                status: 'active'
+            },
+            {
+                id: 'advanced-machine-learning',
+                code: 'CS402',
+                name: 'Advanced Machine Learning',
+                semester: 4,
+                credits: 3,
+                total: 60,
+                attended: 60,
+                minRequired: 75,
+                teacher: 'Dr. Lisa Wang',
+                room: 'Lab 2',
+                schedule: 'Wed',
+                time: '16:00-18:00',
+                type: 'Elective',
+                status: 'active'
+            },
+            {
+                id: 'communication-skills',
+                code: 'HS101',
+                name: 'Communication Skills',
+                semester: 3,
+                credits: 2,
+                total: 60,
+                attended: 49,
+                minRequired: 75,
+                teacher: 'Ms. Jennifer Brown',
+                room: 'Room 104',
+                schedule: 'Tue',
+                time: '11:00-12:00',
+                type: 'Humanities',
+                status: 'active'
+            },
+            {
+                id: 'competitive-coding-2',
+                code: 'CS304',
+                name: 'Competitive Coding - II',
+                semester: 3,
+                credits: 2,
+                total: 60,
+                attended: 55,
+                minRequired: 75,
+                teacher: 'Prof. Robert Garcia',
+                room: 'Room 107',
+                schedule: 'Thu',
+                time: '10:00-11:00',
+                type: 'Elective',
+                status: 'active'
+            }
+        ];
+
+        let currentView = 'courses';
+        let filteredCourses = [...enhancedCoursesData];
+
+        function toggleView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            const coursesView = document.getElementById('coursesView');
+            const lectureView = document.getElementById('lectureView');
+            
+            if (view === 'courses') {
+                coursesView.style.display = 'grid';
+                lectureView.style.display = 'none';
+                renderCourses();
+            } else {
+                coursesView.style.display = 'none';
+                lectureView.style.display = 'block';
+                renderLecturePlan();
+            }
+        }
+
+        function renderCourses() {
+            const coursesGrid = document.getElementById('coursesView');
+            
+            coursesGrid.innerHTML = filteredCourses.map((course, index) => {
+                const attendance = (course.attended / course.total * 100).toFixed(1);
+                const statusClass = getStatusClass(attendance);
+                const statusText = getStatusText(attendance);
+                const fillColor = getStatusColor(attendance);
+                
+                return `
+                    <div class="course-card animate-in pulse-hover" style="animation-delay: ${index * 0.1}s;">
+                        <div class="course-header">
+                            <div class="course-title">
+                                ${course.name}
+                                <span class="course-code">${course.code}</span>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        
+                        <div class="course-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Credits:</span>
+                                <span class="detail-value">${course.credits}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Teacher:</span>
+                                <span class="detail-value">${course.teacher}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Room:</span>
+                                <span class="detail-value">${course.room}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Schedule:</span>
+                                <span class="detail-value">${course.schedule} (${course.time})</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Type:</span>
+                                <span class="detail-value">${course.type}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="attendance-section">
+                            <div class="attendance-header">
+                                <div class="attendance-title">Attendance Progress</div>
+                                <div class="attendance-percentage">${attendance}%</div>
+                            </div>
+                            <div class="attendance-bar">
+                                <div class="attendance-fill" style="width: ${attendance}%; background: ${fillColor};"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="course-actions">
+                            <button class="action-btn action-btn-primary" onclick="openAttendancePredictor('${course.name}')">
+                                <i class="fa-solid fa-chart-line"></i>
+                                Attendance Predictor
+                            </button>
+                            <button class="action-btn action-btn-secondary" onclick="viewCourseDetails('${course.id}')">
+                                <i class="fa-solid fa-info-circle"></i>
+                                Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updateStatistics();
+        }
+
+        function renderLecturePlan() {
+            const lectureGrid = document.getElementById('lectureGrid');
+            
+            // Generate weekly lecture schedule
+            const weeklySchedule = generateWeeklySchedule();
+            
+            lectureGrid.innerHTML = weeklySchedule.map((lecture, index) => `
+                <div class="lecture-item animate-in pulse-hover" style="animation-delay: ${index * 0.1}s;">
+                    <div class="lecture-time">
+                        <i class="fa-solid fa-clock"></i>
+                        ${lecture.time}
+                    </div>
+                    <div class="lecture-details">
+                        <strong>${lecture.title}</strong><br>
+                        ${lecture.teacher}<br>
+                        ${lecture.description}
+                    </div>
+                    <div class="lecture-location">
+                        <i class="fa-solid fa-map-marker-alt"></i>
+                        ${lecture.location}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateWeeklySchedule() {
+            const schedule = [];
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            const times = ['9:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00'];
+            
+            days.forEach(day => {
+                filteredCourses.forEach(course => {
+                    if (course.schedule.includes(day)) {
+                        schedule.push({
+                            time: course.time,
+                            title: course.name,
+                            teacher: course.teacher,
+                            location: course.room,
+                            day: day
+                        });
+                    }
+                });
+            });
+            
+            return schedule;
+        }
+
+        function getStatusClass(attendance) {
+            if (attendance >= 85) return 'status-excellent';
+            if (attendance >= 75) return 'status-good';
+            if (attendance >= 70) return 'status-average';
+            return 'status-risk';
+        }
+
+        function getStatusText(attendance) {
+            if (attendance >= 85) return 'Excellent';
+            if (attendance >= 75) return 'Good';
+            if (attendance >= 70) return 'Average';
+            return 'At Risk';
+        }
+
+        function getStatusColor(attendance) {
+            if (attendance >= 85) return '#27ae60';
+            if (attendance >= 75) return '#3498db';
+            if (attendance >= 70) return '#f39c12';
+            return '#e74c3c';
+        }
+
+        function updateStatistics() {
+            const totalCourses = filteredCourses.length;
+            const avgAttendance = filteredCourses.reduce((sum, course) => sum + (course.attended / course.total * 100), 0) / totalCourses;
+            const completedCourses = filteredCourses.filter(course => course.attended / course.total >= 0.75).length;
+            const atRiskCourses = filteredCourses.filter(course => course.attended / course.total < 0.70).length;
+            
+            document.getElementById('totalCourses').textContent = totalCourses;
+            document.getElementById('avgAttendance').textContent = avgAttendance.toFixed(1) + '%';
+            document.getElementById('completedCourses').textContent = completedCourses;
+            document.getElementById('atRiskCourses').textContent = atRiskCourses;
+        }
+
+        function filterCourses() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const semesterFilter = document.getElementById('semesterFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            filteredCourses = enhancedCoursesData.filter(course => {
+                const matchesSearch = !searchTerm || course.name.toLowerCase().includes(searchTerm) || course.code.toLowerCase().includes(searchTerm);
+                const matchesSemester = semesterFilter === 'all' || course.semester.toString() === semesterFilter;
+                const attendance = (course.attended / course.total * 100);
+                const matchesStatus = statusFilter === 'all' || 
+                    (statusFilter === 'excellent' && attendance >= 85) ||
+                    (statusFilter === 'good' && attendance >= 75 && attendance < 85) ||
+                    (statusFilter === 'average' && attendance >= 70 && attendance < 75) ||
+                    (statusFilter === 'risk' && attendance < 70);
+                
+                return matchesSearch && matchesSemester && matchesStatus;
+            });
+            
+            if (currentView === 'courses') {
+                renderCourses();
+            }
+        }
+
+        function openAttendancePredictor(courseName) {
+            window.location.href = `attendance-predictor.html?subject=${encodeURIComponent(courseName)}`;
+        }
+
+        function viewCourseDetails(courseId) {
+            const course = enhancedCoursesData.find(c => c.id === courseId);
+            if (course) {
+                alert(`Course Details:\n\nName: ${course.name}\nCode: ${course.code}\nCredits: ${course.credits}\nTeacher: ${course.teacher}\nRoom: ${course.room}\nSchedule: ${course.schedule} (${course.time})\nType: ${course.type}\n\nThis would open a detailed course page in a real application.`);
+            }
+        }
+
+        function exportLecturePlan() {
+            const schedule = generateWeeklySchedule();
+            let csvContent = 'Day,Time,Title,Teacher,Location\n';
+            
+            schedule.forEach(lecture => {
+                csvContent += `${lecture.day},${lecture.time},${lecture.title},${lecture.teacher},${lecture.location}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lecture_plan_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCourses();
+        });
+    </script>
+</body>
+</html>

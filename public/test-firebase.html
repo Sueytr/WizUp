@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Firebase Test - WizUP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Firebase Connection Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Firebase Initialization</h2>
+        <div id="initStatus" class="status info">Testing...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Authentication Test</h2>
+        <button onclick="testStudentLogin()">Test Student Login</button>
+        <button onclick="testFacultyLogin()">Test Faculty Login</button>
+        <div id="authStatus" class="status info">Ready to test...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Firestore Test</h2>
+        <button onclick="testFirestore()">Test Database Connection</button>
+        <div id="dbStatus" class="status info">Ready to test...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Console Output</h2>
+        <pre id="consoleOutput">Console output will appear here...</pre>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+            
+            console.log(message);
+        }
+
+        function updateStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+
+        // Test Firebase Initialization
+        window.addEventListener('load', function() {
+            try {
+                if (window.firebaseApp) {
+                    updateStatus('initStatus', '✅ Firebase initialized successfully', 'success');
+                    log('Firebase app initialized');
+                    
+                    // Check if services are available
+                    if (window.firebaseAuth) {
+                        log('Firebase Auth available');
+                    }
+                    if (window.firebaseDB) {
+                        log('Firebase Firestore available');
+                    }
+                    if (window.firebaseStorage) {
+                        log('Firebase Storage available');
+                    }
+                    if (window.firebaseUtils) {
+                        log('Firebase Utils available');
+                    }
+                } else {
+                    updateStatus('initStatus', '❌ Firebase initialization failed', 'error');
+                    log('Firebase app not found', 'error');
+                }
+            } catch (error) {
+                updateStatus('initStatus', `❌ Error: ${error.message}`, 'error');
+                log(`Initialization error: ${error.message}`, 'error');
+            }
+        });
+
+        // Test Student Login
+        async function testStudentLogin() {
+            updateStatus('authStatus', '🔄 Testing student login...', 'info');
+            try {
+                const result = await window.firebaseUtils.signIn('aarav.sharma@wizup.edu', 'student123');
+                if (result.success) {
+                    updateStatus('authStatus', '✅ Student login successful', 'success');
+                    log('Student login successful');
+                } else {
+                    updateStatus('authStatus', `❌ Login failed: ${result.error}`, 'error');
+                    log(`Student login failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('authStatus', `❌ Error: ${error.message}`, 'error');
+                log(`Student login error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test Faculty Login
+        async function testFacultyLogin() {
+            updateStatus('authStatus', '🔄 Testing faculty login...', 'info');
+            try {
+                const result = await window.firebaseUtils.signIn('rahul.singh@wizup.edu', 'faculty123');
+                if (result.success) {
+                    updateStatus('authStatus', '✅ Faculty login successful', 'success');
+                    log('Faculty login successful');
+                } else {
+                    updateStatus('authStatus', `❌ Login failed: ${result.error}`, 'error');
+                    log(`Faculty login failed: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                updateStatus('authStatus', `❌ Error: ${error.message}`, 'error');
+                log(`Faculty login error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test Firestore Connection
+        async function testFirestore() {
+            updateStatus('dbStatus', '🔄 Testing database connection...', 'info');
+            try {
+                // Test reading users collection
+                const usersRef = window.firebaseDB.collection('users');
+                const snapshot = await users.limit(1).get();
+                
+                if (!snapshot.empty) {
+                    updateStatus('dbStatus', '✅ Database connection successful', 'success');
+                    log('Database connection successful');
+                    log(`Found ${snapshot.size} users in database`);
+                } else {
+                    updateStatus('dbStatus', '⚠️ Database is empty', 'info');
+                    log('Database is empty - no users found');
+                }
+            } catch (error) {
+                updateStatus('dbStatus', `❌ Database error: ${error.message}`, 'error');
+                log(`Database error: ${error.message}`, 'error');
+            }
+        }
+
+        // Global error handler
+        window.addEventListener('error', function(event) {
+            log(`JavaScript Error: ${event.error.message}`, 'error');
+        });
+
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            log(`Unhandled Promise Rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>
